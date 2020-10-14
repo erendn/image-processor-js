@@ -8,8 +8,9 @@ const MODE = {
  * @param {*} filterMode 
  */
 ImageData.prototype.filter = function (filterMode) {
-    if (filterMode == MODE.GLASS)
-        glassFilter(this);
+    if (filterMode == MODE.GLASS) {
+        glassFilter(this, { dist: parseInt(document.getElementById("glass-thickness").value) });
+    }
 }
 
 ImageData.prototype.setPixel = function (look, editIndex, targetIndex) {
@@ -18,13 +19,12 @@ ImageData.prototype.setPixel = function (look, editIndex, targetIndex) {
     }
 }
 
-function glassFilter(orig) {
+function glassFilter(orig, setup) {
     var backup = Uint8ClampedArray.from(orig.data);
-    var dist = 20;
     for (var i = 0; i < orig.width; i++) {
         for (var j = 0; j < orig.height; j++) {
-            var ii = random(i - dist, i + dist);
-            var jj = random(j - dist, j + dist);
+            var ii = random(i - setup.dist, i + setup.dist);
+            var jj = random(j - setup.dist, j + setup.dist);
             if (inRectangle(ii, jj, orig.width, orig.height))
                 orig.setPixel(backup, vectorToIndex(i, j, orig.width), vectorToIndex(ii, jj, orig.width));
         }
