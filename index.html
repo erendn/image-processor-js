@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>
+        Image Processor
+    </title>
+</head>
+
+<body onload="resize(); Canvas.init();" onresize="resize()">
+    <link rel="stylesheet" href="style.css">
+    <div id="top-container">
+        ImageProcessorJS
+    </div>
+    <div id="bottom-container">
+        <div class="container" style="width: 30%;">
+            <div class="option-box">
+                <div class="option-title">
+                    <b>Image</b>
+                </div>
+                <div class="option-select">
+                    <select id="image-select">
+                        <option value="sample-image" selected>Sample</option>
+                    </select>
+                </div>
+            </div>
+            <div class="option-box">
+                <div class="option-title">
+                    <b>Filter</b>
+                </div>
+                <div class="option-select">
+                    <select id="filter-select" onchange="Canvas.drawImage()">
+                        <option value="original" selected>No filter</option>
+                        <option value="glass">Glass</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+        <div class="container" style="width: 70%;">
+            <canvas id="main-canvas"></canvas>
+        </div>
+    </div>
+    <script src="src/scripts/textFit.js"></script>
+    <script src="src/scripts/Algorithm.js"></script>
+    <script src="src/scripts/Canvas.js"></script>
+    <script>
+        function resize() {
+            textFit(document.getElementById("top-container"), { alignVert: true, alignHoriz: true });
+        }
+    </script>
+</body>
+
+</html>
