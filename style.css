@@ -1,5 +1,8 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat&display=swap');
+
 * {
     box-sizing: border-box;
+    font-family: 'Montserrat', sans-serif;
 }
 
 html, body {
@@ -15,7 +18,6 @@ html, body {
 
 #bottom-container {
     height: 90%;
-    background-color: #808080;
     padding: 1%;
 }
 

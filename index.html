@@ -31,6 +31,8 @@
                         <option value="original" selected>No filter</option>
                         <option value="flip">Flip</option>
                         <option value="grayscale">Grayscale</option>
+                        <option value="monochrome">Monochrome</option>
+                        <option value="dichrome">Dichrome</option>
                         <option value="glass">Glass</option>
                         <option value="posterize">Posterize</option>
                     </select>
@@ -70,6 +72,34 @@
                             <option value="luminance">Luminance</option>
                             <option value="decomposition">Decomposition</option>
                             <option value="single-color">Single Color</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="option-group">
+                <div class="option-box">
+                    <div class="option-title">
+                        <b>Color</b>
+                    </div>
+                    <div class="option-box">
+                        <select id="monochrome-mode" onchange="Canvas.drawImage();">
+                            <option value="red" selected>Red</option>
+                            <option value="green">Green</option>
+                            <option value="blue">Blue</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="option-group">
+                <div class="option-box">
+                    <div class="option-title">
+                        <b>Colors</b>
+                    </div>
+                    <div class="option-box">
+                        <select id="dichrome-mode" onchange="Canvas.drawImage();">
+                            <option value="blue" selected>Red and Green</option>
+                            <option value="green">Red and Blue</option>
+                            <option value="red">Green and Blue</option>
                         </select>
                     </div>
                 </div>

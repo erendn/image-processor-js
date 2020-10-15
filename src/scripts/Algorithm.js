@@ -2,6 +2,8 @@ const MODE = {
     ORIGINAL: "original",
     FLIP: "flip",
     GRAYSCALE: "grayscale",
+    MONOCHROME: "monochrome",
+    DICHROME: "dichrome",
     GLASS: "glass",
     POSTERIZE: "posterize"
 }
@@ -22,6 +24,12 @@ ImageData.prototype.filter = function (filterMode) {
         else if (mode == "single-color")
             secondMode = document.getElementById("single-color-mode").value;
         grayscaleFilter(this, mode, secondMode);
+    }
+    if (filterMode == MODE.MONOCHROME) {
+        monochromeFilter(this, document.getElementById("monochrome-mode").value);
+    }
+    if (filterMode == MODE.DICHROME) {
+        dichromeFilter(this, document.getElementById("dichrome-mode").value);
     }
     if (filterMode == MODE.GLASS) {
         glassFilter(this, parseInt(document.getElementById("glass-thickness").value));
@@ -72,9 +80,10 @@ function flipFilter(orig, axis) {
 }
 
 /**
- * Applies the monochrome filter to the given ImageData with the given mode.
+ * Applies the grayscale filter to the given ImageData with the given mode.
  * @param {ImageData} orig 
- * @param {string} axis 
+ * @param {string} mode 
+ * @param {string} secondMode 
  */
 function grayscaleFilter(orig, mode, secondMode) {
     for (var i = 0; i < orig.data.length; i += 4) {
@@ -98,6 +107,38 @@ function grayscaleFilter(orig, mode, secondMode) {
             else if (secondMode == "blue")
                 gray = orig.data[i + 2];
         orig.data[i] = orig.data[i + 1] = orig.data[i + 2] = gray;
+    }
+}
+
+/**
+ * Applies the monochrome filter to the given ImageData with the given mode.
+ * @param {ImageData} orig 
+ * @param {string} mode 
+ */
+function monochromeFilter(orig, mode) {
+    for (var i = 0; i < orig.data.length; i += 4) {
+        if (mode != "red")
+            orig.data[i] = 0;
+        if (mode != "green")
+            orig.data[i + 1] = 0;
+        if (mode != "blue")
+            orig.data[i + 2] = 0;
+    }
+}
+
+/**
+ * Applies the dichrome filter to the given ImageData with the given mode.
+ * @param {ImageData} orig 
+ * @param {string} mode 
+ */
+function dichromeFilter(orig, mode) {
+    for (var i = 0; i < orig.data.length; i += 4) {
+        if (mode == "red")
+            orig.data[i] = 0;
+        if (mode == "green")
+            orig.data[i + 1] = 0;
+        if (mode == "blue")
+            orig.data[i + 2] = 0;
     }
 }
 
