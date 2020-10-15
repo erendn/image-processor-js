@@ -4,6 +4,9 @@ function Canvas2D() {
     this.originalImage = null;
 }
 
+/**
+ * Updates the originalImage with the uploaded image file.
+ */
 Canvas2D.prototype.updateImage = function () {
     var reader = new FileReader();
     reader.addEventListener("load", function () {
@@ -12,12 +15,20 @@ Canvas2D.prototype.updateImage = function () {
     reader.readAsDataURL(document.getElementById("img-loader").files[0]);
 }
 
+/**
+ * Resizes the canvas with the given width and height values.
+ * @param {number} width 
+ * @param {number} height 
+ */
 Canvas2D.prototype.resize = function (width, height) {
     this.canvas.width = width;
     this.canvas.height = height;
     this.drawImage();
 }
 
+/**
+ * Draws the originalImage on the canvas and then applies the chosen filter to it.
+ */
 Canvas2D.prototype.drawImage = function () {
     if (this.originalImage != null) {
         this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
@@ -33,6 +44,10 @@ Canvas2D.prototype.drawImage = function () {
     }
 }
 
+/**
+ * Loads the originalImage. If image data is not provided, loads the sample image.
+ * @param {*} data 
+ */
 function loadImage(data = null) {
     var image = new Image();
     image.onerror = function () {

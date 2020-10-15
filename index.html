@@ -29,8 +29,24 @@
                 <div class="option-select">
                     <select id="filter-select" onchange="updateOptions(); Canvas.drawImage();">
                         <option value="original" selected>No filter</option>
+                        <option value="flip">Flip</option>
                         <option value="glass">Glass</option>
+                        <option value="posterize">Posterize</option>
                     </select>
+                </div>
+            </div>
+            <div class="option-group">
+                <div class="option-box">
+                    <div class="option-title">
+                        <b>Axis</b>
+                    </div>
+                    <div class="option-box">
+                        <select id="flip-axis" onchange="Canvas.drawImage();">
+                            <option value="vertical" selected>Vertical</option>
+                            <option value="horizontal">Horizontal</option>
+                            <option value="both">Both</option>
+                        </select>
+                    </div>
                 </div>
             </div>
             <div class="option-group">
@@ -40,6 +56,17 @@
                     </div>
                     <div class="option-box">
                         <input type="range" id="glass-thickness" min="0" max="50" value="10"
+                            oninput="Canvas.drawImage()"></input>
+                    </div>
+                </div>
+            </div>
+            <div class="option-group">
+                <div class="option-box">
+                    <div class="option-title">
+                        <b>Channel Depth</b>
+                    </div>
+                    <div class="option-box">
+                        <input type="range" id="posterize-depth" min="1" max="256" value="64"
                             oninput="Canvas.drawImage()"></input>
                     </div>
                 </div>
