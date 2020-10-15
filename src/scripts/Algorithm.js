@@ -40,14 +40,34 @@ ImageData.prototype.filter = function (filterMode) {
 }
 
 /**
- * Adjusts the pixel's bit depth according to the given bit depth.
+ * Adjusts the pixel's bit depth according to the given bit depth. Also applies the dithehring algorithm if provided.
  * @param {number} depth 
+ * @param {string} ditherAlgo
  */
-ImageData.prototype.fixBit = function (depth) {
+ImageData.prototype.fixBit = function (depth, ditherAlgo) {
     var mod = 256 / Math.pow(2, depth - 1);
-    for (var i = 0; i < this.data.length; i++) {
-        if (i % 4 != 3)
-            this.data[i] = Math.round(this.data[i] / mod) * mod;
+    if (ditherAlgo == "none") {
+        for (var i = 0; i < this.data.length; i++) {
+            if (i % 4 != 3)
+                this.data[i] = Math.round(this.data[i] / mod) * mod;
+        }
+    }
+    if (ditherAlgo == "floyd-steinberg") {
+        for (var i = 0; i < this.width; i++) {
+            for (var j = 0; j < this.height; j++) {
+                var index = vectorToIndex(i, j, this.width);
+                for (var k = 0; k < 3; k++) {
+                    var oldvalue = this.data[index + k];
+                    var newvalue = Math.round(oldvalue / mod) * mod;
+                    this.data[index + k] = newvalue;
+                    var error = oldvalue - newvalue;
+                    for (var m = 7; m > 0; m -= 2) {
+                        var neighbor = vectorToIndex(i + (m == 3 ? -1 : m == 5 ? 0 : 1), j + (m == 7 ? 0 : 1), this.width);
+                        this.data[neighbor + k] += Math.trunc(error * m / 16);
+                    }
+                }
+            }
+        }
     }
 }
 

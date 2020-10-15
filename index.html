@@ -46,6 +46,17 @@
                     <input type="range" id="bit-depth" min="1" max="8" value="8" oninput="Canvas.drawImage()"></input>
                 </div>
             </div>
+            <div class="option-box">
+                <div class="option-title">
+                    <b>Dithering</b>
+                </div>
+                <div class="option-select">
+                    <select id="dithering-algo" onchange="Canvas.drawImage();">
+                        <option value="none" selected>No dithering</option>
+                        <option value="floyd-steinberg">Floyd-Steinberg</option>
+                    </select>
+                </div>
+            </div>
             <div class="option-group">
                 <div class="option-box">
                     <div class="option-title">
