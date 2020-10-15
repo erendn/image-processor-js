@@ -30,9 +30,19 @@
                     <select id="filter-select" onchange="updateOptions(); Canvas.drawImage();">
                         <option value="original" selected>No filter</option>
                         <option value="flip">Flip</option>
+                        <option value="monochrome">Monochrome</option>
                         <option value="glass">Glass</option>
                         <option value="posterize">Posterize</option>
                     </select>
+                </div>
+            </div>
+            <div class="option-box">
+                <div class="option-title">
+                    <b>Bit Depth</b>
+                </div>
+                <div class="option-select">
+                    <input type="range" id="bit-depth" min="1" max="8" value="8"
+                            oninput="Canvas.drawImage()"></input>
                 </div>
             </div>
             <div class="option-group">
@@ -45,6 +55,23 @@
                             <option value="vertical" selected>Vertical</option>
                             <option value="horizontal">Horizontal</option>
                             <option value="both">Both</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="option-group">
+                <div class="option-box">
+                    <div class="option-title">
+                        <b>Mode</b>
+                    </div>
+                    <div class="option-box">
+                        <select id="monochrome-mode" onchange="Canvas.drawImage();">
+                            <option value="lightness" selected>Lightness</option>
+                            <option value="average">Average</option>
+                            <option value="luminosity">Luminosity</option>
+                            <option value="red">Red</option>
+                            <option value="green">Green</option>
+                            <option value="blue">Blue</option>
                         </select>
                     </div>
                 </div>

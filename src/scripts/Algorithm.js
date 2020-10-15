@@ -1,6 +1,7 @@
 const MODE = {
     ORIGINAL: "original",
     FLIP: "flip",
+    MONOCHROME: "monochrome",
     GLASS: "glass",
     POSTERIZE: "posterize"
 }
@@ -13,11 +14,26 @@ ImageData.prototype.filter = function (filterMode) {
     if (filterMode == MODE.FLIP) {
         flipFilter(this, document.getElementById("flip-axis").value);
     }
+    if (filterMode == MODE.MONOCHROME) {
+        monochromeFilter(this, document.getElementById("monochrome-mode").value);
+    }
     if (filterMode == MODE.GLASS) {
         glassFilter(this, parseInt(document.getElementById("glass-thickness").value));
     }
     if (filterMode == MODE.POSTERIZE) {
         posterizeFilter(this, parseInt(document.getElementById("posterize-depth").value));
+    }
+}
+
+/**
+ * Adjusts the pixel's bit depth according to the given bit depth.
+ * @param {number} depth 
+ */
+ImageData.prototype.fixBit = function (depth) {
+    var mod = 256 / Math.pow(2, depth - 1);
+    for (var i = 0; i < this.data.length; i++) {
+        if (i % 4 != 3)
+            this.data[i] = Math.round(this.data[i] / mod) * mod;
     }
 }
 
@@ -50,6 +66,30 @@ function flipFilter(orig, axis) {
 }
 
 /**
+ * Applies the monochrome filter to the given ImageData with the given mode.
+ * @param {ImageData} orig 
+ * @param {string} axis 
+ */
+function monochromeFilter(orig, mode) {
+    for (var i = 0; i < orig.data.length; i += 4) {
+        var gray = 0;
+        if (mode == "lightness")
+            gray = Math.floor((Math.max(orig.data[i], orig.data[i + 1], orig.data[i + 2]) + Math.min(orig.data[i], orig.data[i + 1], orig.data[i + 2])) / 2);
+        if (mode == "average")
+            gray = Math.floor((orig.data[i] + orig.data[i + 1] + orig.data[i + 2]) / 3);
+        if (mode == "luminosity")
+            gray = Math.floor(0.21 * orig.data[i] + 0.72 * orig.data[i + 1] + 0.07 * orig.data[i + 2]);
+        if (mode == "red")
+            gray = orig.data[i];
+        if (mode == "green")
+            gray = orig.data[i + 1];
+        if (mode == "blue")
+            gray = orig.data[i + 2];
+        orig.data[i] = orig.data[i + 1] = orig.data[i + 2] = gray;
+    }
+}
+
+/**
  * Applies the glass filter to the given ImageData using the given distance value.
  * @param {ImageData} orig 
  * @param {number} dist 
@@ -72,10 +112,9 @@ function glassFilter(orig, dist) {
  * @param {number} mod 
  */
 function posterizeFilter(orig, mod) {
-    var backup = Uint8ClampedArray.from(orig.data);
-    for (var i = 0; i < backup.length; i++) {
+    for (var i = 0; i < orig.data.length; i++) {
         if (i % 4 != 3)
-            orig.data[i] = Math.trunc(backup[i] / mod) * mod;
+            orig.data[i] = Math.trunc(orig.data[i] / mod) * mod;
     }
 }
 

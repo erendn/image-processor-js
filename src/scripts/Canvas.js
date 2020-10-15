@@ -40,6 +40,7 @@ Canvas2D.prototype.drawImage = function () {
         var imageData = this.context.getImageData(0, 0, this.canvas.width, this.canvas.height);
         var filter = document.getElementById("filter-select");
         imageData.filter(filter.options[filter.selectedIndex].value);
+        imageData.fixBit(document.getElementById("bit-depth").value)
         this.context.putImageData(imageData, 0, 0);
     }
 }
