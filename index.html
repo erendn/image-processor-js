@@ -30,7 +30,7 @@
                     <select id="filter-select" onchange="updateOptions(); Canvas.drawImage();">
                         <option value="original" selected>No filter</option>
                         <option value="flip">Flip</option>
-                        <option value="monochrome">Monochrome</option>
+                        <option value="grayscale">Grayscale</option>
                         <option value="glass">Glass</option>
                         <option value="posterize">Posterize</option>
                     </select>
@@ -41,8 +41,7 @@
                     <b>Bit Depth</b>
                 </div>
                 <div class="option-select">
-                    <input type="range" id="bit-depth" min="1" max="8" value="8"
-                            oninput="Canvas.drawImage()"></input>
+                    <input type="range" id="bit-depth" min="1" max="8" value="8" oninput="Canvas.drawImage()"></input>
                 </div>
             </div>
             <div class="option-group">
@@ -59,19 +58,18 @@
                     </div>
                 </div>
             </div>
-            <div class="option-group">
+            <div class="option-group" id="grayscale-group">
                 <div class="option-box">
                     <div class="option-title">
                         <b>Mode</b>
                     </div>
                     <div class="option-box">
-                        <select id="monochrome-mode" onchange="Canvas.drawImage();">
-                            <option value="lightness" selected>Lightness</option>
+                        <select id="grayscale-mode" onchange="updateOptions(); Canvas.drawImage();">
+                            <option value="desaturation" selected>Desaturation</option>
                             <option value="average">Average</option>
-                            <option value="luminosity">Luminosity</option>
-                            <option value="red">Red</option>
-                            <option value="green">Green</option>
-                            <option value="blue">Blue</option>
+                            <option value="luminance">Luminance</option>
+                            <option value="decomposition">Decomposition</option>
+                            <option value="single-color">Single Color</option>
                         </select>
                     </div>
                 </div>
@@ -98,6 +96,33 @@
                     </div>
                 </div>
             </div>
+            <div class="option-group" id="decomposition-group">
+                <div class="option-box">
+                    <div class="option-title">
+                        <b>Decomposition Mode</b>
+                    </div>
+                    <div class="option-box">
+                        <select id="decomposition-mode" onchange="Canvas.drawImage();">
+                            <option value="max" selected>Maximum</option>
+                            <option value="min">Minimum</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="option-group" id="single-color-group">
+                <div class="option-box">
+                    <div class="option-title">
+                        <b>Color Mode</b>
+                    </div>
+                    <div class="option-box">
+                        <select id="single-color-mode" onchange="Canvas.drawImage();">
+                            <option value="red" selected>Red</option>
+                            <option value="green">Green</option>
+                            <option value="blue">Blue</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
         </div>
         <div class="container" style="width: 70%;">
             <canvas id="main-canvas"></canvas>
@@ -114,14 +139,19 @@
         }
 
         function updateOptions() {
-            var actives = document.getElementsByClassName("active");
-            for (var i = 0; i < actives.length; i++) {
-                actives[i].classList.remove("active");
+            var groups = document.getElementsByClassName("option-group");
+            for (var i = 0; i < groups.length; i++) {
+                groups[i].classList.remove("active");
             }
             var filter = document.getElementById("filter-select");
-            var groups = document.getElementsByClassName("option-group");
-            if (filter.selectedIndex > 0)
+            if (filter.selectedIndex > 0) {
                 groups[filter.selectedIndex - 1].classList.add("active");
+                if (groups[filter.selectedIndex - 1].id == "grayscale-group" && document.getElementById("grayscale-mode").value == "decomposition") {
+                    document.getElementById("decomposition-group").classList.add("active");
+                } else if (groups[filter.selectedIndex - 1].id == "grayscale-group" && document.getElementById("grayscale-mode").value == "single-color") {
+                    document.getElementById("single-color-group").classList.add("active");
+                }
+            }
         }
     </script>
 </body>

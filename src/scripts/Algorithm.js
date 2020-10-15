@@ -1,7 +1,7 @@
 const MODE = {
     ORIGINAL: "original",
     FLIP: "flip",
-    MONOCHROME: "monochrome",
+    GRAYSCALE: "grayscale",
     GLASS: "glass",
     POSTERIZE: "posterize"
 }
@@ -14,8 +14,14 @@ ImageData.prototype.filter = function (filterMode) {
     if (filterMode == MODE.FLIP) {
         flipFilter(this, document.getElementById("flip-axis").value);
     }
-    if (filterMode == MODE.MONOCHROME) {
-        monochromeFilter(this, document.getElementById("monochrome-mode").value);
+    if (filterMode == MODE.GRAYSCALE) {
+        var mode = document.getElementById("grayscale-mode").value;
+        var secondMode = null;
+        if (mode == "decomposition")
+            secondMode = document.getElementById("decomposition-mode").value;
+        else if (mode == "single-color")
+            secondMode = document.getElementById("single-color-mode").value;
+        grayscaleFilter(this, mode, secondMode);
     }
     if (filterMode == MODE.GLASS) {
         glassFilter(this, parseInt(document.getElementById("glass-thickness").value));
@@ -70,21 +76,27 @@ function flipFilter(orig, axis) {
  * @param {ImageData} orig 
  * @param {string} axis 
  */
-function monochromeFilter(orig, mode) {
+function grayscaleFilter(orig, mode, secondMode) {
     for (var i = 0; i < orig.data.length; i += 4) {
         var gray = 0;
-        if (mode == "lightness")
+        if (mode == "desaturation")
             gray = Math.floor((Math.max(orig.data[i], orig.data[i + 1], orig.data[i + 2]) + Math.min(orig.data[i], orig.data[i + 1], orig.data[i + 2])) / 2);
         if (mode == "average")
             gray = Math.floor((orig.data[i] + orig.data[i + 1] + orig.data[i + 2]) / 3);
-        if (mode == "luminosity")
+        if (mode == "luminance")
             gray = Math.floor(0.21 * orig.data[i] + 0.72 * orig.data[i + 1] + 0.07 * orig.data[i + 2]);
-        if (mode == "red")
-            gray = orig.data[i];
-        if (mode == "green")
-            gray = orig.data[i + 1];
-        if (mode == "blue")
-            gray = orig.data[i + 2];
+        if (mode == "decomposition")
+            if (secondMode == "max")
+                gray = Math.max(orig.data[i], orig.data[i + 1], orig.data[i + 2]);
+            else if (secondMode == "min")
+                gray = Math.min(orig.data[i], orig.data[i + 1], orig.data[i + 2]);
+        if (mode == "single-color")
+            if (secondMode == "red")
+                gray = orig.data[i];
+            else if (secondMode == "green")
+                gray = orig.data[i + 1];
+            else if (secondMode == "blue")
+                gray = orig.data[i + 2];
         orig.data[i] = orig.data[i + 1] = orig.data[i + 2] = gray;
     }
 }

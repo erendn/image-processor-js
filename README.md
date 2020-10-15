@@ -2,7 +2,7 @@
 
 ImageProcessorJS is an image processing simulator where all image processing algorithms are implemented using pure JavaScript.
 
-<div align="center" style="border-sizing: border-box; padding-left: 30%; padding-right: 30%;">
+<div align="center">
     <a href="https://biarmic.github.io/image-processor-js/" target="_blank">
         <img src="./src/assets/images/demo-link.png" >
     </a>
@@ -10,6 +10,6 @@ ImageProcessorJS is an image processing simulator where all image processing alg
 
 ## Filters
 * Flip
-* Monochrome
+* Grayscale
 * Glass
 * Posterize
