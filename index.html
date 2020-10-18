@@ -34,6 +34,7 @@
                         <option value="monochrome">Monochrome</option>
                         <option value="dichrome">Dichrome</option>
                         <option value="glass">Glass</option>
+                        <option value="blur">Blur</option>
                         <option value="posterize">Posterize</option>
                     </select>
                 </div>
@@ -126,6 +127,29 @@
                     </div>
                 </div>
             </div>
+            <div class="option-group" id="blur-group">
+                <div class="option-box">
+                    <div class="option-title">
+                        <b>Blurriness</b>
+                    </div>
+                    <div class="option-box">
+                        <input type="range" id="blurriness" min="0" max="50" value="10"
+                            oninput="Canvas.drawImage()"></input>
+                    </div>
+                </div>
+                <div class="option-box">
+                    <div class="option-title">
+                        <b>Blur Mode</b>
+                    </div>
+                    <div class="option-box">
+                        <select id="blur-mode" onchange="updateOptions(); Canvas.drawImage();">
+                            <option value="motion" selected>Motion Blur</option>
+                            <option value="box">Box Blur</option>
+                            <option value="tent">Tent Blur</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
             <div class="option-group">
                 <div class="option-box">
                     <div class="option-title">
@@ -164,14 +188,27 @@
                     </div>
                 </div>
             </div>
+            <div class="option-group" id="motion-blur-group">
+                <div class="option-box">
+                    <div class="option-title">
+                        <b>Motion Blur Mode</b>
+                    </div>
+                    <div class="option-box">
+                        <select id="motion-blur-mode" onchange="Canvas.drawImage();">
+                            <option value="vertical" selected>Vertical</option>
+                            <option value="horizontal">Horizontal</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
         </div>
         <div class="container" style="width: 70%;">
             <canvas id="main-canvas"></canvas>
         </div>
     </div>
     <script src="src/scripts/textFit.js"></script>
-    <script src="src/scripts/Algorithm.js"></script>
-    <script src="src/scripts/Canvas.js"></script>
+    <script src="src/scripts/algorithm.js"></script>
+    <script src="src/scripts/canvas.js"></script>
     <script>
         function resize() {
             textFit(document.getElementById("top-container"), { alignVert: true, alignHoriz: true });
@@ -191,6 +228,8 @@
                     document.getElementById("decomposition-group").classList.add("active");
                 } else if (groups[filter.selectedIndex - 1].id == "grayscale-group" && document.getElementById("grayscale-mode").value == "single-color") {
                     document.getElementById("single-color-group").classList.add("active");
+                } else if (groups[filter.selectedIndex - 1].id == "blur-group" && document.getElementById("blur-mode").value == "motion") {
+                    document.getElementById("motion-blur-group").classList.add("active");
                 }
             }
         }

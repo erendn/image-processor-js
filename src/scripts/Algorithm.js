@@ -5,12 +5,13 @@ const MODE = {
     MONOCHROME: "monochrome",
     DICHROME: "dichrome",
     GLASS: "glass",
+    BLUR: "blur",
     POSTERIZE: "posterize"
 }
 
 /**
  * Applies the specified filter mode to the original ImageData and modifies it.
- * @param {*} filterMode 
+ * @param {string} filterMode 
  */
 ImageData.prototype.filter = function (filterMode) {
     if (filterMode == MODE.FLIP) {
@@ -33,6 +34,13 @@ ImageData.prototype.filter = function (filterMode) {
     }
     if (filterMode == MODE.GLASS) {
         glassFilter(this, parseInt(document.getElementById("glass-thickness").value));
+    }
+    if (filterMode == MODE.BLUR) {
+        var mode = document.getElementById("blur-mode").value;
+        var secondMode = null;
+        if (mode == "motion")
+            secondMode = document.getElementById("motion-blur-mode").value;
+        blurFilter(this, parseInt(document.getElementById("blurriness").value), mode, secondMode);
     }
     if (filterMode == MODE.POSTERIZE) {
         posterizeFilter(this, parseInt(document.getElementById("posterize-depth").value));
@@ -177,6 +185,85 @@ function glassFilter(orig, dist) {
                 orig.setPixel(backup, vectorToIndex(i, j, orig.width), vectorToIndex(ii, jj, orig.width));
         }
     }
+}
+
+/**
+ * Applies the blur filter to the given ImageData using the given distance value.
+ * @param {ImageData} orig 
+ * @param {number} dist 
+ * @param {string} mode 
+ * @param {string} secondMode 
+ */
+function blurFilter(orig, dist, mode, secondMode) {
+    if (mode == "motion")
+        motionBlur(orig, dist, secondMode);
+    if (mode == "box")
+        boxBlur(orig, dist);
+    if (mode == "tent")
+        tentBlur(orig, dist);
+}
+
+/**
+ * Applies the motion blur filter to the given ImageData using the given distance value and mode.
+ * @param {ImageData} orig 
+ * @param {number} dist 
+ * @param {string} mode 
+ */
+function motionBlur(orig, dist, mode) {
+    var backup = Uint8ClampedArray.from(orig.data);
+    var isVert = mode == "vertical";
+    for (var i = 0; i < (isVert ? orig.width : orig.height); ++i) {
+        var accum = [0, 0, 0, 0];
+        var count = 0;
+        for (var j = 0; j < (isVert ? orig.height : orig.width); ++j) {
+            if (count == 0) {
+                for (var p = 0; p <= dist; ++p) {
+                    var neighbor = vectorToIndex(isVert ? i : j + p, isVert ? j + p : i, orig.width);
+                    for (var k = 0; k < 4; ++k)
+                        accum[k] += backup[neighbor + k];
+                    ++count;
+                }
+            } else {
+                if (inRectangle(isVert ? i : j - dist, isVert ? j - dist : i, orig.width, orig.height)) {
+                    var neighbor = vectorToIndex(isVert ? i : j - dist, isVert ? j - dist : i, orig.width);
+                    for (var k = 0; k < 4; ++k)
+                        accum[k] -= backup[neighbor + k];
+                    --count;
+                }
+                if (inRectangle(isVert ? i : j + dist, isVert ? j + dist : i, orig.width, orig.height)) {
+                    var neighbor = vectorToIndex(isVert ? i : j + dist, isVert ? j + dist : i, orig.width);
+                    for (var k = 0; k < 4; ++k)
+                        accum[k] += backup[neighbor + k];
+                    ++count;
+                }
+            }
+            var current = [];
+            for (var k = 0; k < 4; ++k) {
+                current.push(Math.floor(accum[k] / count));
+            }
+            orig.setPixel(current, vectorToIndex(isVert ? i : j, isVert ? j : i, orig.width), 0);
+        }
+    }
+}
+
+/**
+ * Applies the box blur to the given ImageData using the given distance value.
+ * @param {ImageData} orig 
+ * @param {number} dist 
+ */
+function boxBlur(orig, dist) {
+    motionBlur(orig, dist, "vertical");
+    motionBlur(orig, dist, "horizontal");
+}
+
+/**
+ * Applies the tent blur to the given ImageData using the given distance value.
+ * @param {ImageData} orig 
+ * @param {number} dist 
+ */
+function tentBlur(orig, dist) {
+    boxBlur(orig, dist);
+    boxBlur(orig, dist);
 }
 
 /**

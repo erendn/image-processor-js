@@ -37,22 +37,22 @@ Canvas2D.prototype.drawImage = function () {
         var sw = or > cr ? this.canvas.width : this.canvas.height * or;
         var sh = or > cr ? this.canvas.width / or : this.canvas.height;
         this.context.drawImage(this.originalImage, (this.canvas.width - sw) / 2, (this.canvas.height - sh) / 2, sw, sh);
-        var imageData = this.context.getImageData(0, 0, this.canvas.width, this.canvas.height);
+        var imageData = this.context.getImageData(parseInt((this.canvas.width - sw) / 2), parseInt((this.canvas.height - sh) / 2) + 1, sw, sh);
         var filter = document.getElementById("filter-select");
         imageData.filter(filter.options[filter.selectedIndex].value);
         imageData.fixBit(document.getElementById("bit-depth").value, document.getElementById("dithering-algo").value)
-        this.context.putImageData(imageData, 0, 0);
+        this.context.putImageData(imageData, parseInt((this.canvas.width - sw) / 2), parseInt((this.canvas.height - sh) / 2) + 1);
     }
 }
 
 /**
  * Loads the originalImage. If image data is not provided, loads the sample image.
- * @param {*} data 
+ * @param {string} data 
  */
 function loadImage(data = null) {
     var image = new Image();
     image.onerror = function () {
-        alert("Image could not be loaded.");
+        alert("Failed to load the image file.");
     }
     image.onload = function () {
         image.crossOrigin = "Anonymous";
