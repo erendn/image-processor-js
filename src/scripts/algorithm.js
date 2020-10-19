@@ -6,7 +6,8 @@ const MODE = {
     DICHROME: "dichrome",
     GLASS: "glass",
     BLUR: "blur",
-    POSTERIZE: "posterize"
+    POSTERIZE: "posterize",
+    SOLARIZE: "solarize"
 }
 
 /**
@@ -44,6 +45,9 @@ ImageData.prototype.filter = function (filterMode) {
     }
     if (filterMode == MODE.POSTERIZE) {
         posterizeFilter(this, parseInt(document.getElementById("posterize-depth").value));
+    }
+    if (filterMode == MODE.SOLARIZE) {
+        solarizeFilter(this, parseInt(document.getElementById("solarize-threshold").value));
     }
 }
 
@@ -275,6 +279,21 @@ function posterizeFilter(orig, mod) {
     for (var i = 0; i < orig.data.length; i++) {
         if (i % 4 != 3)
             orig.data[i] = Math.trunc(orig.data[i] / mod) * mod;
+    }
+}
+
+/**
+ * Applies the solarize filter to the given ImageData using the limit value.
+ * @param {ImageData} orig 
+ * @param {number} limit 
+ */
+function solarizeFilter(orig, limit) {
+    for (var i = 0; i < orig.data.length; i += 4) {
+        var average = Math.floor((orig.data[i] + orig.data[i + 1] + orig.data[i + 2]) / 3);
+        if (average <= limit)
+            for (var j = 0; j < 3; j++) {
+                orig.data[i + j] = 255 - orig.data[i + j];
+            }
     }
 }
 
