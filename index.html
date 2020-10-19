@@ -7,7 +7,7 @@
     </title>
 </head>
 
-<body onload="resize(); loadImage();" onresize="resize()">
+<body onload="init();" onresize="resize()">
     <link rel="stylesheet" href="style.css">
     <div id="top-container">
         ImageProcessorJS
@@ -219,9 +219,36 @@
         </div>
     </div>
     <script src="src/scripts/textFit.js"></script>
+    <script src="src/scripts/canvasToBlob.js"></script>
+    <script src="src/scripts/fileSaver.js"></script>
     <script src="src/scripts/algorithm.js"></script>
     <script src="src/scripts/canvas.js"></script>
     <script>
+        function init() {
+            resize();
+            loadImage();
+            document.addEventListener("keydown", function (e) {
+                if ((window.navigator.platform.match("Mac") ? e.metaKey : e.ctrlKey) && e.keyCode == 83) {
+                    e.preventDefault();
+                    var or = Canvas.originalImage.width / Canvas.originalImage.height;
+                    var cr = Canvas.canvas.width / Canvas.canvas.height;
+                    var sw = or > cr ? Canvas.canvas.width : Canvas.canvas.height * or;
+                    var sh = or > cr ? Canvas.canvas.width / or : Canvas.canvas.height;
+                    var imageData = Canvas.context.getImageData((Canvas.canvas.width - sw) / 2, (Canvas.canvas.height - sh) / 2, sw, sh);
+                    var container = document.getElementsByClassName("container")[1];
+                    var saveCanvas = document.createElement("canvas");
+                    container.appendChild(saveCanvas);
+                    saveCanvas.width = sw;
+                    saveCanvas.height = sh;
+                    saveCanvas.getContext("2d").putImageData(imageData, 0, 0);
+                    saveCanvas.toBlob(function (blob) {
+                        saveAs(blob, "image.png");
+                    });
+                    container.removeChild(saveCanvas);
+                }
+            }, false);
+        }
+
         function resize() {
             textFit(document.getElementById("top-container"), { alignVert: true, alignHoriz: true });
             var container = document.getElementsByClassName("container")[1];

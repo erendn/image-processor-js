@@ -37,7 +37,7 @@ Canvas2D.prototype.drawImage = function () {
         var sw = or > cr ? this.canvas.width : this.canvas.height * or;
         var sh = or > cr ? this.canvas.width / or : this.canvas.height;
         this.context.drawImage(this.originalImage, (this.canvas.width - sw) / 2, (this.canvas.height - sh) / 2, sw, sh);
-        var imageData = this.context.getImageData((this.canvas.width - sw) / 2, (this.canvas.height - sh) / 2, sw, sh + 1);
+        var imageData = this.context.getImageData((this.canvas.width - sw) / 2, (this.canvas.height - sh) / 2, sw, sh);
         var filter = document.getElementById("filter-select");
         imageData.filter(filter.options[filter.selectedIndex].value);
         imageData.fixBit(document.getElementById("bit-depth").value, document.getElementById("dithering-algo").value)
