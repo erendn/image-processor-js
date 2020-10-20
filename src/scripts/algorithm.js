@@ -7,7 +7,8 @@ const MODE = {
     GLASS: "glass",
     BLUR: "blur",
     POSTERIZE: "posterize",
-    SOLARIZE: "solarize"
+    SOLARIZE: "solarize",
+    EDGE: "edge"
 }
 
 /**
@@ -48,6 +49,13 @@ ImageData.prototype.filter = function (filterMode) {
     }
     if (filterMode == MODE.SOLARIZE) {
         solarizeFilter(this, parseInt(document.getElementById("solarize-threshold").value));
+    }
+    if (filterMode == MODE.EDGE) {
+        var mode = document.getElementById("edge-mode").value;
+        var secondMode = null;
+        if(mode == "sobel")
+            secondMode = document.getElementById("sobel-mode").value;
+        edgeFilter(this, mode, secondMode);
     }
 }
 
@@ -92,6 +100,17 @@ ImageData.prototype.fixBit = function (depth, ditherAlgo) {
 ImageData.prototype.setPixel = function (look, editIndex, targetIndex) {
     for (var i = 0; i < 4; i++) {
         this.data[editIndex + i] = look[targetIndex + i];
+    }
+}
+
+ImageData.prototype.copy = function () {
+    return {
+        data: this.data,
+        width: this.width,
+        height: this.height,
+        filter: this.filter,
+        fixBit: this.fixBit,
+        setPixel: this.setPixel
     }
 }
 
@@ -228,8 +247,8 @@ function motionBlur(orig, dist, mode) {
                     ++count;
                 }
             } else {
-                if (inRectangle(isVert ? i : j - dist, isVert ? j - dist : i, orig.width, orig.height)) {
-                    var neighbor = vectorToIndex(isVert ? i : j - dist, isVert ? j - dist : i, orig.width);
+                if (inRectangle(isVert ? i : j - dist - 1, isVert ? j - dist - 1 : i, orig.width, orig.height)) {
+                    var neighbor = vectorToIndex(isVert ? i : j - dist - 1, isVert ? j - dist - 1 : i, orig.width);
                     for (var k = 0; k < 4; ++k)
                         accum[k] -= backup[neighbor + k];
                     --count;
@@ -294,6 +313,92 @@ function solarizeFilter(orig, limit) {
             for (var j = 0; j < 3; j++) {
                 orig.data[i + j] = 255 - orig.data[i + j];
             }
+    }
+}
+
+/**
+ * Applies the edge detection filter with the given mode values.
+ * @param {ImageData} orig 
+ * @param {string} mode 
+ * @param {string} secondMode 
+ */
+function edgeFilter(orig, mode, secondMode) {
+    if (mode == "sobel")
+        sobel(orig, secondMode);
+}
+
+/**
+ * Applies the sobel filter to the given ImageData.
+ * @param {ImageData} orig 
+ */
+function sobel(orig, mode) {
+    if (mode != "both")
+        linearSobel(orig, mode);
+    else {
+        var copyX = orig.copy();
+        var copyY = orig.copy();
+        linearSobel(copyX, "vertical");
+        linearSobel(copyY, "horizontal");
+        for (var i = 0; i < orig.data.length; ++i) {
+            orig.data[i] = Math.sqrt(copyX.data[i] * copyX.data[i] + copyY.data[i] * copyY.data[i]) >>> 0;
+        }
+    }
+}
+
+
+/**
+ * Applies the linear sobel filter to the given ImageData with the given mode.
+ * @param {ImageData} orig 
+ * @param {string} mode 
+ */
+function linearSobel(orig, mode) {
+    var backup = Uint8ClampedArray.from(orig.data);
+    var isVert = mode == "vertical";
+    for (var i = 0; i < (isVert ? orig.width : orig.height); ++i) {
+        var accum = [0, 0, 0];
+        var init = true;
+        for (var j = 0; j < (isVert ? orig.height : orig.width); ++j) {
+            if (init) {
+                init = false;
+                for (var r = -1; r <= 1; r += 2) {
+                    for (var p = 0; p < 2; ++p) {
+                        if (inRectangle(isVert ? i + r : j + p, isVert ? j + p : i + r, orig.width, orig.height)) {
+                            var neighbor = vectorToIndex(isVert ? i + r : j + p, isVert ? j + p : i + r, orig.width);
+                            for (var k = 0; k < 3; ++k)
+                                accum[k] += backup[neighbor + k] * r;
+                        }
+                    }
+                }
+            } else {
+                for (var r = -1; r <= 1; r += 2) {
+                    if (inRectangle(isVert ? i + r : j - 2, isVert ? j - 2 : i + r, orig.width, orig.height)) {
+                        var neighbor = vectorToIndex(isVert ? i + r : j - 2, isVert ? j - 2 : i + r, orig.width);
+                        for (var k = 0; k < 3; ++k)
+                            accum[k] -= backup[neighbor + k] * r;
+                    }
+                }
+                for (var r = -1; r <= 1; r += 2) {
+                    if (inRectangle(isVert ? i + r : j + 1, isVert ? j + 1 : i + r, orig.width, orig.height)) {
+                        var neighbor = vectorToIndex(isVert ? i + r : j + 1, isVert ? j + 1 : i + r, orig.width);
+                        for (var k = 0; k < 3; ++k)
+                            accum[k] += backup[neighbor + k] * r;
+                    }
+                }
+            }
+            var current = [0, 0, 0, 255];
+            for (var k = 0; k < 3; ++k) {
+                current[k] += accum[k];
+            }
+            for (var r = -1; r <= 1; r += 2) {
+                if (inRectangle(isVert ? i + r : j, isVert ? j : i + r, orig.width, orig.height)) {
+                    var neighbor = vectorToIndex(isVert ? i + r : j, isVert ? j : i + r, orig.width);
+                    for (var k = 0; k < 3; ++k) {
+                        current[k] += backup[neighbor + k] * r;
+                    }
+                }
+            }
+            orig.setPixel(current, vectorToIndex(isVert ? i : j, isVert ? j : i, orig.width), 0);
+        }
     }
 }
 

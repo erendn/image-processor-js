@@ -7,9 +7,9 @@ ImageProcessorJS is an image processing simulator where all image processing alg
 ## Features
 * Save image (Ctrl + S or &#8984; + S)
 * Bit depth
-* Dithering:
+* Dithering
     * Floyd-Steinberg
-* Filters:
+* Filters
     * Flip
     * Grayscale
     * Monochrome
@@ -18,3 +18,4 @@ ImageProcessorJS is an image processing simulator where all image processing alg
     * Blur
     * Posterize
     * Solarize
+    * Edge Detection

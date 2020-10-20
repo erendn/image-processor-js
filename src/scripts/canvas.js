@@ -64,7 +64,7 @@ function loadImage(data = null) {
         image.src = data;
     else {
         image.src = `./src/images/${document.getElementById("sample-image-select").value}.jpg`;
-        // image.src = "https://raw.githubusercontent.com/biarmic/image-processor-js/main/src/images/parrot.jpg"; // To test in localhost without dealing with CORS
+        // image.src = `https://raw.githubusercontent.com/biarmic/image-processor-js/main/src/images/${document.getElementById("sample-image-select").value}.jpg`; // To test in localhost without dealing with CORS
     }
     return image;
 }

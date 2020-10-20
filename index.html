@@ -60,6 +60,7 @@
                         <option value="blur">Blur</option>
                         <option value="posterize">Posterize</option>
                         <option value="solarize">Solarize</option>
+                        <option value="edge">Edge Detection</option>
                     </select>
                 </div>
             </div>
@@ -196,6 +197,18 @@
                     </div>
                 </div>
             </div>
+            <div class="option-group" id="edge-group">
+                <div class="option-box">
+                    <div class="option-title">
+                        <b>Mode</b>
+                    </div>
+                    <div class="option-box">
+                        <select id="edge-mode" onchange="Canvas.drawImage();">
+                            <option value="sobel" selected>Sobel</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
             <div class="option-group" id="decomposition-group">
                 <div class="option-box">
                     <div class="option-title">
@@ -231,6 +244,20 @@
                     <div class="option-box">
                         <select id="motion-blur-mode" onchange="Canvas.drawImage();">
                             <option value="vertical" selected>Vertical</option>
+                            <option value="horizontal">Horizontal</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="option-group" id="sobel-group">
+                <div class="option-box">
+                    <div class="option-title">
+                        <b>Motion Blur Mode</b>
+                    </div>
+                    <div class="option-box">
+                        <select id="sobel-mode" onchange="Canvas.drawImage();">
+                            <option value="both" selected>Both</option>
+                            <option value="vertical">Vertical</option>
                             <option value="horizontal">Horizontal</option>
                         </select>
                     </div>
@@ -276,7 +303,7 @@
             textFit(document.getElementById("top-container"), { alignVert: true, alignHoriz: true });
             var titles = document.getElementsByClassName("option-title");
             for (var i = 0; i < titles.length; ++i) {
-                titles[i].style.fontSize = `${titles[i].offsetHeight / 2}px`;
+                titles[i].style.fontSize = `${titles[0].offsetHeight / 2}px`;
             }
             var container = document.getElementsByClassName("container")[1];
             Canvas.resize(container.offsetWidth, container.offsetHeight);
@@ -296,6 +323,8 @@
                     document.getElementById("single-color-group").classList.add("active");
                 } else if (groups[filter.selectedIndex - 1].id == "blur-group" && document.getElementById("blur-mode").value == "motion") {
                     document.getElementById("motion-blur-group").classList.add("active");
+                } else if (groups[filter.selectedIndex - 1].id == "edge-group" && document.getElementById("edge-mode").value == "sobel") {
+                    document.getElementById("sobel-group").classList.add("active");
                 }
             }
         }
