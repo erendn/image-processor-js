@@ -40,7 +40,8 @@ Canvas2D.prototype.drawImage = function () {
         var imageData = this.context.getImageData((this.canvas.width - sw) / 2, (this.canvas.height - sh) / 2, sw, sh);
         var filter = document.getElementById("filter-select");
         imageData.filter(filter.options[filter.selectedIndex].value);
-        imageData.fixBit(document.getElementById("bit-depth").value, document.getElementById("dithering-algo").value)
+        imageData.fixBit(document.getElementById("bit-depth").value, document.getElementById("dithering-algo").value);
+        this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
         this.context.putImageData(imageData, (this.canvas.width - sw) / 2, (this.canvas.height - sh) / 2);
     }
 }
@@ -62,8 +63,8 @@ function loadImage(data = null) {
     if (data != null)
         image.src = data;
     else {
-        image.src = `./src/assets/images/sample-image.jpg`
-        // image.src = "https://raw.githubusercontent.com/biarmic/image-processor-js/main/src/assets/images/sample-image.jpg"; // To test in localhost without dealing with CORS
+        image.src = `./src/images/${document.getElementById("sample-image-select").value}.jpg`;
+        // image.src = "https://raw.githubusercontent.com/biarmic/image-processor-js/main/src/images/parrot.jpg"; // To test in localhost without dealing with CORS
     }
     return image;
 }

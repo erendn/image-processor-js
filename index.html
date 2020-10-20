@@ -16,7 +16,30 @@
         <div class="container" style="width: 30%;">
             <div class="option-box">
                 <div class="option-title">
-                    <b>Image</b>
+                    <b>Sample Images</b>
+                </div>
+                <div class="option-select">
+                    <select id="sample-image-select" onchange="loadImage(); Canvas.drawImage();">
+                        <option value="baboon" selected>Baboon</option>
+                        <option value="canyon">Canyon</option>
+                        <option value="castle">Castle</option>
+                        <option value="chameleon">Chameleon</option>
+                        <option value="city">City</option>
+                        <option value="eiffel">Eiffel Tower</option>
+                        <option value="forest">Forest</option>
+                        <option value="fuji">Mt. Fuji</option>
+                        <option value="lake">Lake</option>
+                        <option value="leaves">Leaves</option>
+                        <option value="lion">Lion</option>
+                        <option value="parrot">Parrot</option>
+                        <option value="seaturtle">Sea Turtle</option>
+                        <option value="wave">Wave</option>
+                    </select>
+                </div>
+            </div>
+            <div class="option-box">
+                <div class="option-title">
+                    <b>Upload Image</b>
                 </div>
                 <div class="option-select">
                     <input type="file" id="img-loader" accept="image/jpeg, image/png" onchange="Canvas.updateImage()">
@@ -45,7 +68,7 @@
                     <b>Bit Depth</b>
                 </div>
                 <div class="option-select">
-                    <input type="range" id="bit-depth" min="1" max="8" value="8" oninput="Canvas.drawImage()"></input>
+                    <input type="range" id="bit-depth" min="0" max="8" value="8" oninput="Canvas.drawImage()"></input>
                 </div>
             </div>
             <div class="option-box">
@@ -168,7 +191,7 @@
                         <b>Threshold</b>
                     </div>
                     <div class="option-box">
-                        <input type="range" id="solarize-threshold" min="0" max="255" value="63"
+                        <input type="range" id="solarize-threshold" min="0" max="256" value="64"
                             oninput="Canvas.drawImage()"></input>
                     </div>
                 </div>
@@ -251,6 +274,10 @@
 
         function resize() {
             textFit(document.getElementById("top-container"), { alignVert: true, alignHoriz: true });
+            var titles = document.getElementsByClassName("option-title");
+            for (var i = 0; i < titles.length; ++i) {
+                titles[i].style.fontSize = `${titles[i].offsetHeight / 2}px`;
+            }
             var container = document.getElementsByClassName("container")[1];
             Canvas.resize(container.offsetWidth, container.offsetHeight);
         }

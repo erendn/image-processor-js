@@ -57,7 +57,7 @@ ImageData.prototype.filter = function (filterMode) {
  * @param {string} ditherAlgo
  */
 ImageData.prototype.fixBit = function (depth, ditherAlgo) {
-    var mod = 256 / Math.pow(2, depth - 1);
+    var mod = 256 / Math.pow(2, depth);
     if (ditherAlgo == "none") {
         for (var i = 0; i < this.data.length; i++) {
             if (i % 4 != 3)
@@ -290,7 +290,7 @@ function posterizeFilter(orig, mod) {
 function solarizeFilter(orig, limit) {
     for (var i = 0; i < orig.data.length; i += 4) {
         var average = Math.floor((orig.data[i] + orig.data[i + 1] + orig.data[i + 2]) / 3);
-        if (average <= limit)
+        if (average < limit)
             for (var j = 0; j < 3; j++) {
                 orig.data[i + j] = 255 - orig.data[i + j];
             }
