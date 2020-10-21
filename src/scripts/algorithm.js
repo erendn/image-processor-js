@@ -16,10 +16,9 @@ const MODE = {
  * @param {string} filterMode 
  */
 ImageData.prototype.filter = function (filterMode) {
-    if (filterMode == MODE.FLIP) {
+    if (filterMode == MODE.FLIP)
         flipFilter(this, document.getElementById("flip-axis").value);
-    }
-    if (filterMode == MODE.GRAYSCALE) {
+    else if (filterMode == MODE.GRAYSCALE) {
         var mode = document.getElementById("grayscale-mode").value;
         var secondMode = null;
         if (mode == "decomposition")
@@ -28,32 +27,27 @@ ImageData.prototype.filter = function (filterMode) {
             secondMode = document.getElementById("single-color-mode").value;
         grayscaleFilter(this, mode, secondMode);
     }
-    if (filterMode == MODE.MONOCHROME) {
+    else if (filterMode == MODE.MONOCHROME)
         monochromeFilter(this, document.getElementById("monochrome-mode").value);
-    }
-    if (filterMode == MODE.DICHROME) {
+    else if (filterMode == MODE.DICHROME)
         dichromeFilter(this, document.getElementById("dichrome-mode").value);
-    }
-    if (filterMode == MODE.GLASS) {
+    else if (filterMode == MODE.GLASS)
         glassFilter(this, parseInt(document.getElementById("glass-thickness").value));
-    }
-    if (filterMode == MODE.BLUR) {
+    else if (filterMode == MODE.BLUR) {
         var mode = document.getElementById("blur-mode").value;
         var secondMode = null;
         if (mode == "motion")
             secondMode = document.getElementById("motion-blur-mode").value;
         blurFilter(this, parseInt(document.getElementById("blurriness").value), mode, secondMode);
     }
-    if (filterMode == MODE.POSTERIZE) {
+    else if (filterMode == MODE.POSTERIZE)
         posterizeFilter(this, parseInt(document.getElementById("posterize-depth").value));
-    }
-    if (filterMode == MODE.SOLARIZE) {
+    else if (filterMode == MODE.SOLARIZE)
         solarizeFilter(this, parseInt(document.getElementById("solarize-threshold").value));
-    }
-    if (filterMode == MODE.EDGE) {
+    else if (filterMode == MODE.EDGE) {
         var mode = document.getElementById("edge-mode").value;
         var secondMode = null;
-        if(mode == "sobel")
+        if (mode == "sobel")
             secondMode = document.getElementById("sobel-mode").value;
         edgeFilter(this, mode, secondMode);
     }
@@ -67,16 +61,15 @@ ImageData.prototype.filter = function (filterMode) {
 ImageData.prototype.fixBit = function (depth, ditherAlgo) {
     var mod = 256 / Math.pow(2, depth);
     if (ditherAlgo == "none") {
-        for (var i = 0; i < this.data.length; i++) {
+        for (var i = 0; i < this.data.length; ++i) {
             if (i % 4 != 3)
                 this.data[i] = Math.round(this.data[i] / mod) * mod;
         }
-    }
-    if (ditherAlgo == "floyd-steinberg") {
-        for (var i = 0; i < this.width; i++) {
-            for (var j = 0; j < this.height; j++) {
+    } else if (ditherAlgo == "floyd-steinberg") {
+        for (var i = 0; i < this.width; ++i) {
+            for (var j = 0; j < this.height; ++j) {
                 var index = vectorToIndex(i, j, this.width);
-                for (var k = 0; k < 3; k++) {
+                for (var k = 0; k < 3; ++k) {
                     var oldvalue = this.data[index + k];
                     var newvalue = Math.round(oldvalue / mod) * mod;
                     this.data[index + k] = newvalue;
@@ -98,9 +91,8 @@ ImageData.prototype.fixBit = function (depth, ditherAlgo) {
  * @param {number} targetIndex 
  */
 ImageData.prototype.setPixel = function (look, editIndex, targetIndex) {
-    for (var i = 0; i < 4; i++) {
+    for (var i = 0; i < 4; ++i)
         this.data[editIndex + i] = look[targetIndex + i];
-    }
 }
 
 ImageData.prototype.copy = function () {
@@ -121,8 +113,8 @@ ImageData.prototype.copy = function () {
  */
 function flipFilter(orig, axis) {
     var backup = Uint8ClampedArray.from(orig.data);
-    for (var i = 0; i < orig.width; i++) {
-        for (var j = 0; j < orig.height; j++) {
+    for (var i = 0; i < orig.width; ++i) {
+        for (var j = 0; j < orig.height; ++j) {
             var ii = axis == "vertical" || axis == "both" ? orig.width - i : i;
             var jj = axis == "horizontal" || axis == "both" ? orig.height - j : j;
             orig.setPixel(backup, vectorToIndex(i, j, orig.width), vectorToIndex(ii, jj, orig.width));
@@ -141,21 +133,21 @@ function grayscaleFilter(orig, mode, secondMode) {
         var gray = 0;
         if (mode == "desaturation")
             gray = Math.floor((Math.max(orig.data[i], orig.data[i + 1], orig.data[i + 2]) + Math.min(orig.data[i], orig.data[i + 1], orig.data[i + 2])) / 2);
-        if (mode == "average")
+        else if (mode == "average")
             gray = Math.floor((orig.data[i] + orig.data[i + 1] + orig.data[i + 2]) / 3);
-        if (mode == "luminance")
+        else if (mode == "luminance")
             gray = Math.floor(0.21 * orig.data[i] + 0.72 * orig.data[i + 1] + 0.07 * orig.data[i + 2]);
-        if (mode == "decomposition")
+        else if (mode == "decomposition")
             if (secondMode == "max")
                 gray = Math.max(orig.data[i], orig.data[i + 1], orig.data[i + 2]);
-            else if (secondMode == "min")
+            else
                 gray = Math.min(orig.data[i], orig.data[i + 1], orig.data[i + 2]);
-        if (mode == "single-color")
+        else if (mode == "single-color")
             if (secondMode == "red")
                 gray = orig.data[i];
             else if (secondMode == "green")
                 gray = orig.data[i + 1];
-            else if (secondMode == "blue")
+            else
                 gray = orig.data[i + 2];
         orig.data[i] = orig.data[i + 1] = orig.data[i + 2] = gray;
     }
@@ -186,9 +178,9 @@ function dichromeFilter(orig, mode) {
     for (var i = 0; i < orig.data.length; i += 4) {
         if (mode == "red")
             orig.data[i] = 0;
-        if (mode == "green")
+        else if (mode == "green")
             orig.data[i + 1] = 0;
-        if (mode == "blue")
+        else
             orig.data[i + 2] = 0;
     }
 }
@@ -200,8 +192,8 @@ function dichromeFilter(orig, mode) {
  */
 function glassFilter(orig, dist) {
     var backup = Uint8ClampedArray.from(orig.data);
-    for (var i = 0; i < orig.width; i++) {
-        for (var j = 0; j < orig.height; j++) {
+    for (var i = 0; i < orig.width; ++i) {
+        for (var j = 0; j < orig.height; ++j) {
             var ii = random(i - dist, i + dist);
             var jj = random(j - dist, j + dist);
             if (inRectangle(ii, jj, orig.width, orig.height))
@@ -220,9 +212,9 @@ function glassFilter(orig, dist) {
 function blurFilter(orig, dist, mode, secondMode) {
     if (mode == "motion")
         motionBlur(orig, dist, secondMode);
-    if (mode == "box")
+    else if (mode == "box")
         boxBlur(orig, dist);
-    if (mode == "tent")
+    else if (mode == "tent")
         tentBlur(orig, dist);
 }
 
@@ -295,10 +287,9 @@ function tentBlur(orig, dist) {
  * @param {number} mod 
  */
 function posterizeFilter(orig, mod) {
-    for (var i = 0; i < orig.data.length; i++) {
+    for (var i = 0; i < orig.data.length; ++i)
         if (i % 4 != 3)
             orig.data[i] = Math.trunc(orig.data[i] / mod) * mod;
-    }
 }
 
 /**
@@ -310,7 +301,7 @@ function solarizeFilter(orig, limit) {
     for (var i = 0; i < orig.data.length; i += 4) {
         var average = Math.floor((orig.data[i] + orig.data[i + 1] + orig.data[i + 2]) / 3);
         if (average < limit)
-            for (var j = 0; j < 3; j++) {
+            for (var j = 0; j < 3; ++j) {
                 orig.data[i + j] = 255 - orig.data[i + j];
             }
     }
@@ -339,9 +330,8 @@ function sobel(orig, mode) {
         var copyY = orig.copy();
         linearSobel(copyX, "vertical");
         linearSobel(copyY, "horizontal");
-        for (var i = 0; i < orig.data.length; ++i) {
+        for (var i = 0; i < orig.data.length; ++i)
             orig.data[i] = Math.sqrt(copyX.data[i] * copyX.data[i] + copyY.data[i] * copyY.data[i]) >>> 0;
-        }
     }
 }
 

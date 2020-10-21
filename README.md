@@ -12,10 +12,18 @@ ImageProcessorJS is an image processing simulator where all image processing alg
 * Filters
     * Flip
     * Grayscale
+        * Desaturation
+        * Average
+        * Luminance
+        * Decomposition
+        * Single color
     * Monochrome
     * Dichrome
     * Glass
     * Blur
+        * Motion blur
+        * Box blur
+        * Tent blur
     * Posterize
     * Solarize
     * Edge Detection
