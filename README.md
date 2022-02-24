@@ -2,7 +2,7 @@
 
 ImageProcessorJS is an image processing simulator where all image processing algorithms are implemented using pure JavaScript.
 
-## [Webpage](https://erendo.github.io/image-processor-js/)
+## [Webpage](https://erendn.github.io/image-processor-js/)
 
 ## Features
 * Save image (Ctrl + S or &#8984; + S)
